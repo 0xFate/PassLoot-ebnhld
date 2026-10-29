@@ -1,4 +1,4 @@
-# PassLoot-3-3-5a
+# PassLoot-ebnhld
 
 A refreshed **vibecoded** version of [PassLoot](http://www.wowace.com/projects/pass-loot/) — a WoW Wrath of the Lich King (3.3.5a) addon that automates loot rolling (need/greed/pass/disenchant) based on configurable rules.
 
