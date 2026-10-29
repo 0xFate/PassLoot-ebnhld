@@ -67,6 +67,10 @@ L["Will pass on all loot matching this rule."] = "Отказаться от вс
 L["Will roll greed on all loot matching this rule."] = "Выбирать \\\"Не откажусь\\\" на всю добычу соответствующию этому правилу." -- Needs review
 L["Will roll need on all loot matching this rule."] = "Выбирать \\\"Нужно\\\" на всю добычу соответствующию этому правилу." -- Needs review
 
+L["Auto Leave Party"] = "Покидать группу автоматически"
+L["Auto Leave Party_Desc"] = [=[Автоматически покидать группу после подземелья через Поиск подземелий, как только всё, на что вы бросали кость (need/greed/disenchant), будет добыто, и Замороженный шар будет получен.]=]
+L["Frozen Orb"] = "Ледяной шар"
+
 local LM = LibStub("AceLocale-3.0"):NewLocale("PassLoot_Modules", "ruRU", false);
 -- LM["%class% - %spec%"] = "%class% - %spec%"
 -- LM["%type% - %subtype%"] = "%type% - %subtype%"

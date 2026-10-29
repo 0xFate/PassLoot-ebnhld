@@ -6,13 +6,10 @@ local defaults = {
   ["profile"] = {
     ["Quiet"] = false,
     ["AllowMultipleConfirmPopups"] = false,
+    ["AutoLeaveParty"] = false,
     ["Rules"] = {},
     ["Modules"] = {},
     ["SinkOptions"] = {},
-    -- ["WindowPos"] = {  -- Unused after moving Everything to Blizz Options Frame
-      -- ["X"] = nil,
-      -- ["Y"] = nil,
-    -- },
     ["MessageText"] = {
       ["need"] = L["Rolling need on %item% (%rule%)"],
       ["greed"] = L["Rolling greed on %item% (%rule%)"],
@@ -134,6 +131,13 @@ PassLoot.OptionsTable = {
           ["width"] = "full",
           ["disabled"] = function(info, value) return not StaticPopupDialogs.CONFIRM_LOOT_ROLL end,  -- Some versions of WoW (or addons that remove) don't have CONFIRM_LOOT_ROLL
         },
+        ["AutoLeaveParty"] = {
+          ["name"] = L["Auto Leave Party"],
+          ["desc"] = L["Auto Leave Party_Desc"],
+          ["type"] = "toggle",
+          ["order"] = 30,
+          ["arg"] = { "AutoLeaveParty" },
+        },
       },
     },
     ["Modules"] = {
@@ -192,37 +196,40 @@ function PassLoot:OnInitialize()
   -- self.db.RegisterCallback(self, "OnProfileDeleted", "OnProfileNewOrDelete");
   -- self.db.RegisterCallback(self, "OnNewProfile", "OnProfileNewOrDelete");
   self:SetSinkStorage(self.db.profile.SinkOptions);
+  self.ItemsRolledOn = {};
+  self.FrozenOrbLooted = false;
 
   self.OptionsTable.args.Profiles = LibStub("AceDBOptions-3.0"):GetOptionsTable(self.db);
   self.OptionsTable.args.Output = self:GetSinkAce3OptionsDataTable();
   LibStub("AceConfig-3.0"):RegisterOptionsTable(L["PassLoot"], self.OptionsTable, {L["PASSLOOT_SLASH_COMMAND"]});
 
-  -- self.MainFrame = self:Create_MainFrame();
   self.RulesFrame = self:Create_RulesFrame();
   InterfaceOptions_AddCategory(self.RulesFrame);
   self.Tooltip = self:Create_PassLootTooltip();
-  -- self.BlizOptionsFrame = LibStub("AceConfigDialog-3.0"):AddToBlizOptions("PassLoot", L["PassLoot"]);
   self.BlizOptionsFrames = {
     ["Modules"] = LibStub("AceConfigDialog-3.0"):AddToBlizOptions(L["PassLoot"], L["Modules"], L["PassLoot"], "Modules"),
     ["GeneralOptions"] = LibStub("AceConfigDialog-3.0"):AddToBlizOptions(L["PassLoot"], L["Options"], L["PassLoot"], "Options"),
     ["Profiles"] = LibStub("AceConfigDialog-3.0"):AddToBlizOptions(L["PassLoot"], L["Profiles"], L["PassLoot"], "Profiles"),
     ["Output"] = LibStub("AceConfigDialog-3.0"):AddToBlizOptions(L["PassLoot"], L["Output"], L["PassLoot"], "Output"),
   };
-  
-  -- PanelTemplates_SetNumTabs(PassLoot_TabbedMenuContainer, 2);  -- 2 because there are 2 tabs total.
-  -- PanelTemplates_SetTab(PassLoot_TabbedMenuContainer, 1);      -- 1 because we want tab 1 selected.
-  -- PanelTemplates_UpdateTabs(PassLoot_TabbedMenuContainer);
 end
 
 function PassLoot:OnEnable()
   self:RegisterEvent("START_LOOT_ROLL");
+  self:RegisterEvent("PARTY_MEMBERS_CHANGED");
+  if ( not UnitInRaid("player") ) then
+    self:RegisterEvent("CHAT_MSG_LOOT");
+  end
   self:UpgradeDatabase();
   self:SetupModulesOptionsTables(); -- Creates Module header frames and lays them out in the scroll frame
   self:OnProfileChanged();
+  self:ResetAutoLeaveState();
 end
 
 function PassLoot:OnDisable()
   self:UnregisterEvent("START_LOOT_ROLL");
+  self:UnregisterEvent("CHAT_MSG_LOOT");
+  self:UnregisterEvent("PARTY_MEMBERS_CHANGED");
 end
 
 function PassLoot:OnProfileChanged()
@@ -237,11 +244,7 @@ function PassLoot:OnProfileChanged()
   self:CheckRuleTables();
   self:Rules_RuleList_OnScroll();
   self:DisplayCurrentRule();
-  -- self:OnProfileNewOrDelete();
 end
-
--- function PassLoot:OnProfileNewOrDelete()
--- end
 
 function PassLoot:LoadModules()
   local Module;
@@ -354,16 +357,12 @@ function PassLoot:START_LOOT_ROLL(Event, RollID, ...)
           break;
         end
       end
-      -- for LootKey, LootValue in ipairs(RuleValue.Loot) do
-        -- if ( CanRoll[LootValue] ) then
-          -- RollMethod = self.RollMethod[LootValue];
-          -- StatusMsg = self.db.profile.MessageText[LootValue];
-          -- break;
-        -- end
-      -- end
       self:SendMessage("PassLoot_OnRoll", ItemLink, RuleKey, RollID, RollMethod);  -- Maybe change this to OnRuleMatched
       if ( not self.TestLink and RollMethod ) then
         RollOnLoot(RollID, RollMethod);
+        if ( not UnitInRaid("player") and RollMethod ~= self.RollMethod.pass and Name ) then
+          self.ItemsRolledOn[Name] = true;
+        end
       end
       if ( self.db.profile.Quiet == false ) then
         -- Workaround for LibSink.  It can handle |c and |r color stuff, but not full ItemLinks
@@ -388,6 +387,63 @@ function PassLoot:START_LOOT_ROLL(Event, RollID, ...)
     self:Pour(L["No rules matched."]);
   end
   self.TestLink, CanRoll.greed, CanRoll.need, CanRoll.de = nil, nil, nil, nil;
+end
+
+function PassLoot:CHAT_MSG_LOOT(Event, Msg)
+  local Pattern = string.gsub(LOOT_ROLL_WON, "%%s", "(.+)");
+  local Start, End, Who, Item = string.find(Msg, Pattern);
+  if ( Start and Who and Item ) then
+    self:HandleLootRollResolved(Item);
+    return;
+  end
+  Pattern = string.gsub(LOOT_ROLL_ALL_PASSED, "%%s", "(.+)");
+  Start, End, Item = string.find(Msg, Pattern);
+  if ( Start and Item ) then
+    self:HandleLootRollResolved(Item);
+  end
+end
+
+function PassLoot:HandleLootRollResolved(Item)
+  Item = GetItemInfo(Item);
+  if ( Item == L["Frozen Orb"] ) then
+    self.FrozenOrbLooted = true;
+  end
+  if ( self.ItemsRolledOn[Item] ) then
+    self.ItemsRolledOn[Item] = nil;
+  end
+  self:CheckAutoLeaveParty();
+end
+
+function PassLoot:CheckAutoLeaveParty()
+  if ( not self.db.profile.AutoLeaveParty ) then
+    return;
+  end
+  if ( not self.FrozenOrbLooted ) then
+    return;
+  end
+  for _ in pairs(self.ItemsRolledOn) do
+    return;
+  end
+  if ( GetNumPartyMembers() > 0 and not UnitInRaid("player") ) then
+    LeaveParty();
+  end
+  self:ResetAutoLeaveState();
+end
+
+function PassLoot:ResetAutoLeaveState()
+  self.ItemsRolledOn = {};
+  self.FrozenOrbLooted = false;
+end
+
+function PassLoot:PARTY_MEMBERS_CHANGED()
+  if ( GetNumPartyMembers() == 0 ) then
+    self:ResetAutoLeaveState();
+  end
+  if ( UnitInRaid("player") ) then
+    self:UnregisterEvent("CHAT_MSG_LOOT");
+  else
+    self:RegisterEvent("CHAT_MSG_LOOT");
+  end
 end
 
 -- We make sure each rule has a default value

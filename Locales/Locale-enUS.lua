@@ -67,6 +67,10 @@ L["Will pass on all loot matching this rule."] = true
 L["Will roll greed on all loot matching this rule."] = true
 L["Will roll need on all loot matching this rule."] = true
 
+L["Auto Leave Party"] = true
+L["Auto Leave Party_Desc"] = [=[Automatically leave the party after a Random Dungeon Finder run once everything you rolled on (need/greed/disenchant) has been looted and the Frozen Orb has dropped.]=]
+L["Frozen Orb"] = "Frozen Orb"
+
 local LM = LibStub("AceLocale-3.0"):NewLocale("PassLoot_Modules", "enUS", true);
 LM["%class% - %spec%"] = true
 LM["%type% - %subtype%"] = true

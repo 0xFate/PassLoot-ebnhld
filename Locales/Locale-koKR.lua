@@ -67,6 +67,10 @@ Use '%rule%' for rule that was matched.
 -- L["Will roll greed on all loot matching this rule."] = "Will roll greed on all loot matching this rule."
 -- L["Will roll need on all loot matching this rule."] = "Will roll need on all loot matching this rule."
 
+L["Auto Leave Party"] = "파티 자동 퇴장"
+L["Auto Leave Party_Desc"] = [=[무작위 던전 찾기 후, 굴린 아이템(need/greed/disenchant)이 모두 전리품으로 처리되고 얼어붙은 구슬이 획득되면 파티를 자동으로 퇴장합니다.]=]
+L["Frozen Orb"] = "얼어붙은 보주"
+
 local LM = LibStub("AceLocale-3.0"):NewLocale("PassLoot_Modules", "koKR", false);
 -- LM["%class% - %spec%"] = "%class% - %spec%"
 -- LM["%type% - %subtype%"] = "%type% - %subtype%"

@@ -48,9 +48,9 @@ function PassLoot.Prototypes:UnregisterDefaultVariables()
   local Module = self:GetName();
   PassLoot.PluginInfo[Module] = PassLoot.PluginInfo[Module] or {};
   PassLoot.PluginInfo[Module].RuleVariables = PassLoot.PluginInfo[Module].RuleVariables or {};
-  for RuleKey, RuleValue in ipairs(PassLoot.PluginInfo[Module].RuleVariables) do
+  for VariableName in pairs(PassLoot.PluginInfo[Module].RuleVariables) do
     for DefaultKey, DefaultValue in ipairs(PassLoot.DefaultTemplate) do
-      if ( DefaultValue[1] == RuleKey ) then
+      if ( DefaultValue[1] == VariableName ) then
         table.remove(PassLoot.DefaultTemplate, DefaultKey);
         break;
       end

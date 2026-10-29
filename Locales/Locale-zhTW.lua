@@ -67,6 +67,10 @@ L["Will pass on all loot matching this rule."] = "所有符合本規則的戰利
 L["Will roll greed on all loot matching this rule."] = "所有符合本規則的戰利品都貪婪"
 L["Will roll need on all loot matching this rule."] = "所有符合此規則的戰利品都需求"
 
+L["Auto Leave Party"] = "自動離開隊伍"
+L["Auto Leave Party_Desc"] = [=[隨機地下城查找器結束後，自動離開隊伍，條件是你擲骰（need/greed/disenchant）的所有物品都已拾取且冰凍寶珠已掉落。]=]
+L["Frozen Orb"] = "冰凍寶珠"
+
 local LM = LibStub("AceLocale-3.0"):NewLocale("PassLoot_Modules", "zhTW", false);
 LM["%class% - %spec%"] = "%class% - %spec%"
 LM["%type% - %subtype%"] = "%type% - %subtype%"

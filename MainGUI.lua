@@ -1,10 +1,5 @@
 ﻿local PassLoot = LibStub("AceAddon-3.0"):GetAddon("PassLoot");
 local L = LibStub("AceLocale-3.0"):GetLocale("PassLoot");
-local LootOrderIcons = {
-  "Interface\\MoneyFrame\\UI-GoldIcon",
-  "Interface\\MoneyFrame\\UI-SilverIcon",
-  "Interface\\MoneyFrame\\UI-CopperIcon",
-};
 
 --[=[  Frame layout:
 PassLoot.RulesFrame = {
@@ -276,16 +271,12 @@ function PassLoot:Rules_RuleList_OnScroll()
       for Key, Value in ipairs(self.db.profile.Rules[LineNum].Loot) do
         if ( Value == "pass" ) then
           Frame["ScrollLine"..Line].Pass:SetChecked(true);
-          -- Frame["ScrollLine"..Line].Pass:SetCheckedTexture(LootOrderIcons[Key] or "Interface\\Buttons\\UI-CheckBox-Check");
         elseif ( Value == "greed" ) then
           Frame["ScrollLine"..Line].Greed:SetChecked(true);
-          -- Frame["ScrollLine"..Line].Greed:SetCheckedTexture(LootOrderIcons[Key] or "Interface\\Buttons\\UI-CheckBox-Check");
         elseif ( Value == "need" ) then
           Frame["ScrollLine"..Line].Need:SetChecked(true);
-          -- Frame["ScrollLine"..Line].Need:SetCheckedTexture(LootOrderIcons[Key] or "Interface\\Buttons\\UI-CheckBox-Check");
         elseif ( Value == "de" ) then
           Frame["ScrollLine"..Line].Disenchant:SetChecked(true);
-          -- Frame["ScrollLine"..Line].Disenchant:SetCheckedTexture(LootOrderIcons[Key] or "Interface\\Buttons\\UI-CheckBox-Check");
         end
       end
       Frame["ScrollLine"..Line]:Show();
@@ -560,7 +551,6 @@ function PassLoot:Create_RuleListScrollLine()
   Frame.Disenchant = self:Create_CheckBox();
   Frame.Disenchant:SetParent(Frame);
   Frame.Disenchant:SetPoint("TOPLEFT", Frame.Need, "TOPRIGHT", 40, 0);
-  -- Frame.Disenchant:SetScript("OnClick", function(frame, button) self:SetDisenchant(Frame.LineNum) end);
   Frame.Disenchant:SetScript("OnClick", function(frame, button) self:SetLootMethod(Frame.LineNum, "de") end);
   Frame.Disenchant:SetScript("OnEnter", function() self:ShowTooltip(L["Disenchant"], L["Disenchant_Desc"], L["Rolling is tried from left to right"]) end);
   Frame.Disenchant.Text:SetText(L["Disenchant"]);

@@ -65,6 +65,10 @@ L["Will pass on all loot matching this rule."] = "Will leitet alle Beute für di
 L["Will roll greed on all loot matching this rule."] = "Will Roll-Gier auf allen Beute für diese Regel." -- Needs review
 L["Will roll need on all loot matching this rule."] = "Es wird Bedarf auf jeden Gegenstand gewürfelt, der dieser Regel entspricht."
 
+L["Auto Leave Party"] = "Gruppe automatisch verlassen"
+L["Auto Leave Party_Desc"] = [=[Verlasse automatisch die Gruppe nach einem Zufalls-Dungeon-Finder-Lauf, sobald alles, worauf du gewürfelt hast (Need/Gier/Entzaubern), geplündert wurde und die Gefrorene Kugel abgefallen ist.]=]
+L["Frozen Orb"] = "Gefrorene Kugel"
+
 local LM = LibStub("AceLocale-3.0"):NewLocale("PassLoot_Modules", "deDE", false);
 LM["%class% - %spec%"] = "%class% - %spec%"
 LM["%type% - %subtype%"] = "%type% - %subtype%"

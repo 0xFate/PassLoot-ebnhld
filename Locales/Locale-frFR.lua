@@ -67,6 +67,10 @@ Use '%rule%' for rule that was matched.
 -- L["Will roll greed on all loot matching this rule."] = "Will roll greed on all loot matching this rule."
 -- L["Will roll need on all loot matching this rule."] = "Will roll need on all loot matching this rule."
 
+L["Auto Leave Party"] = "Quitter le groupe automatiquement"
+L["Auto Leave Party_Desc"] = [=[Quitte automatiquement le groupe après un donjon du Recherche-de-donjon une fois que tout ce sur quoi vous avez lancé (besoin/cupidité/désenchantement) a été looté et que l'Orbe gelé est tombé.]=]
+L["Frozen Orb"] = "Orbe gelé"
+
 local LM = LibStub("AceLocale-3.0"):NewLocale("PassLoot_Modules", "frFR", false);
 -- LM["%class% - %spec%"] = "%class% - %spec%"
 -- LM["%type% - %subtype%"] = "%type% - %subtype%"

@@ -67,6 +67,10 @@ L["Up"] = "Arriba"
 -- L["Will roll greed on all loot matching this rule."] = "Will roll greed on all loot matching this rule."
 -- L["Will roll need on all loot matching this rule."] = "Will roll need on all loot matching this rule."
 
+L["Auto Leave Party"] = "Salir del grupo automáticamente"
+L["Auto Leave Party_Desc"] = [=[Sale automáticamente del grupo después de una mazmorra del Buscador de Mazmorras una vez que todo lo que has tirado (necesidad/codicia/desencantar) haya sido saqueado y el Orbe de Escarcha haya caído.]=]
+L["Frozen Orb"] = "Orbe congelado"
+
 local LM = LibStub("AceLocale-3.0"):NewLocale("PassLoot_Modules", "esES", false);
 -- LM["%class% - %spec%"] = "%class% - %spec%"
 -- LM["%type% - %subtype%"] = "%type% - %subtype%"

@@ -1,0 +1,5 @@
+# Kilo agent working directory
+.kilo/
+
+# JetBrains IDE
+.idea/
